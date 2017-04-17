@@ -334,6 +334,10 @@ STATIC GC_thread GC_threads[THREAD_TABLE_SZ];
 static struct GC_Thread_Rep first_thread;
 static GC_bool first_thread_used = FALSE;
 
+void GC_register_altstack(void *stack, int stack_size, void *altstack, int altstack_size)
+{
+}
+
 /* Add a thread to GC_threads.  We assume it wasn't already there.      */
 /* Caller holds allocation lock.                                        */
 /* Unlike the pthreads version, the id field is set by the caller.      */

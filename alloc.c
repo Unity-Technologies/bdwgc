@@ -363,6 +363,16 @@ GC_INLINE void GC_notify_full_gc(void)
 STATIC GC_bool GC_is_full_gc = FALSE;
 
 STATIC GC_bool GC_stopped_mark(GC_stop_func stop_func);
+
+STATIC void(*GC_notify_event) GC_PROTO((GCEventType e));
+GC_API void GC_set_on_collection_event(void(*fn) (GCEventType))
+{
+    DCL_LOCK_STATE;
+    LOCK();
+    GC_notify_event = fn;
+    UNLOCK();
+}
+
 STATIC void GC_finish_collection(void);
 
 /*

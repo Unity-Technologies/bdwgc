@@ -40,11 +40,19 @@
 
 #include "gc_config_macros.h"
 
+# if defined(__STDC__) || defined(__cplusplus) || defined(_AIX)
+#   define GC_PROTO(args) args
+typedef void * GC_PTR;
+#   define GC_CONST const
+# else
+#   define GC_PROTO(args) ()
+typedef char * GC_PTR;
+#   define GC_CONST
+#  endif
+
 #ifdef __cplusplus
   extern "C" {
 #endif
-
-typedef void * GC_PTR;  /* preserved only for backward compatibility    */
 
 /* Define word and signed_word to be unsigned and signed types of the   */
 /* size as char * or void *.  There seems to be no way to do this       */
@@ -141,6 +149,10 @@ typedef enum {
     GC_EVENT_PRE_START_WORLD,
     GC_EVENT_POST_START_WORLD
 } GCEventType;
+
+GC_API void GC_set_on_collection_event GC_PROTO((void(*) (GC_EventType)));
+                        /* Set callback invoked at specific points      */
+                        /* during every collection.                     */
 
 typedef void (GC_CALLBACK * GC_on_event_proc)(GCEventType /* event_type */);
                         /* Invoked when the heap grows or shrinks.      */
@@ -1142,6 +1154,19 @@ GC_API int GC_CALL GC_unregister_long_link(void ** /* link */);
         /* Similar to GC_unregister_disappearing_link but for a */
         /* registration by either of the above two routines.    */
 
+typedef enum {
+	GC_TOGGLE_REF_DROP,
+	GC_TOGGLE_REF_STRONG,
+	GC_TOGGLE_REF_WEAK
+} GC_ToggleRefStatus;
+
+/* toggleref support */
+GC_API void GC_set_toggleref_func GC_PROTO(
+(GC_ToggleRefStatus(*proccess_toggleref) (GC_PTR obj)));
+GC_API int GC_toggleref_add(GC_PTR object, int strong_ref);
+/* Returns GC_SUCCESS if registration succeeded (or no callback	*/
+/* registered yet), GC_NO_MEMORY if failed for lack of memory.	*/
+
 /* Returns !=0 if GC_invoke_finalizers has something to do.     */
 GC_API int GC_CALL GC_should_invoke_finalizers(void);
 
@@ -1323,6 +1348,12 @@ GC_API void * GC_CALL GC_call_with_stack_base(GC_stack_base_func /* fn */,
   /* Return non-zero (TRUE) if and only if the calling thread is        */
   /* registered with the garbage collector.                             */
   GC_API int GC_CALL GC_thread_is_registered(void);
+
+  /* Notify the collector about the stack and the altstack of the current thread */
+  /* STACK/STACK_SIZE is used to determine the stack dimensions when a thread is
+   * suspended while it is on an altstack.
+   */
+  GC_API void GC_register_altstack GC_PROTO((void *stack, int stack_size, void *altstack, int altstack_size));
 
   /* Unregister the current thread.  Only an explicitly registered      */
   /* thread (i.e. for which GC_register_my_thread() returns GC_SUCCESS) */

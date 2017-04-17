@@ -439,6 +439,37 @@ typedef char * ptr_t;   /* A generic pointer to which we can add        */
 #   define BZERO(x,n) bzero((void *)(x),(size_t)(n))
 # endif
 
+/* Delay any interrupts or signals that may abort this thread.  Data    */
+/* structures are in a consistent state outside this pair of calls.     */
+/* ANSI C allows both to be empty (though the standard isn't very       */
+/* clear on that point).  Standard malloc implementations are usually   */
+/* neither interruptable nor thread-safe, and thus correspond to        */
+/* empty definitions.                                                   */
+/* It probably doesn't make any sense to declare these to be nonempty   */
+/* if the code is being optimized, since signal safety relies on some   */
+/* ordering constraints that are typically not obeyed by optimizing     */
+/* compilers.                                                           */
+# ifdef PCR
+#   define DISABLE_SIGNALS() \
+         PCR_Th_SetSigMask(PCR_allSigsBlocked,&GC_old_sig_mask)
+#   define ENABLE_SIGNALS() \
+        PCR_Th_SetSigMask(&GC_old_sig_mask, NIL)
+# else
+#   if defined(THREADS) || defined(AMIGA)  \
+    || defined(MSWIN32) || defined(MSWINCE) || defined(MACOS) \
+    || defined(DJGPP) || defined(NO_SIGNALS)
+/* Also useful for debugging.		*/
+/* Should probably use thr_sigsetmask for GC_SOLARIS_THREADS. */
+#     define DISABLE_SIGNALS()
+#     define ENABLE_SIGNALS()
+#   else
+#     define DISABLE_SIGNALS() GC_disable_signals()
+void GC_disable_signals(void);
+#     define ENABLE_SIGNALS() GC_enable_signals()
+void GC_enable_signals(void);
+#   endif
+# endif
+
 /*
  * Stop and restart mutator threads.
  */
