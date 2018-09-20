@@ -160,7 +160,7 @@ GC_API GC_on_collection_event_proc GC_CALL GC_get_on_collection_event(void);
                         /* Both the supplied setter and the getter      */
                         /* acquire the GC lock (to avoid data races).   */
 
-#if defined(GC_THREADS) || defined(NN_PLATFORM_CTR)
+#if defined(GC_THREADS) || defined(NN_PLATFORM_CTR) || defined(NN_BUILD_TARGET_PLATFORM_NX)
   typedef void (GC_CALLBACK * GC_on_thread_event_proc)(GC_EventType,
                                                 void * /* thread_id */);
                         /* Invoked when a thread is suspended or        */

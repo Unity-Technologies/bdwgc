@@ -250,7 +250,7 @@ typedef char * ptr_t;   /* A generic pointer to which we can add        */
 # define GC_API_PRIV GC_API
 #endif
 
-#if defined(THREADS) && !defined(SN_TARGET_ORBIS) && !defined(SN_TARGET_PSP2)
+#if defined(THREADS) && !defined(SN_TARGET_ORBIS) && !defined(SN_TARGET_PSP2) && !defined(NINTENDO_SWITCH)
 # include "gc_atomic_ops.h"
 #endif
 
@@ -2181,7 +2181,7 @@ GC_EXTERN GC_bool GC_print_back_height;
 #endif /* !GC_DISABLE_INCREMENTAL */
 
 #ifdef MANUAL_VDB
-  GC_API void GC_dirty_inner(const void *p); /* does not require locking */
+  GC_INNER void GC_dirty_inner(const void *p); /* does not require locking */
 # define GC_dirty(p) (GC_incremental ? GC_dirty_inner(p) : (void)0)
 #else
 # define GC_dirty(p) (void)(p)

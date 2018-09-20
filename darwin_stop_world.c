@@ -636,9 +636,7 @@ GC_INNER void GC_stop_world(void)
         if ((p->flags & FINISHED) == 0 && !p->thread_blocked &&
              p->stop_info.mach_thread != my_thread) {
 
-          do {
-            kern_result = thread_suspend(p->stop_info.mach_thread);
-          } while (kern_result == KERN_ABORTED);
+          kern_result = thread_suspend(p->stop_info.mach_thread);
           if (kern_result != KERN_SUCCESS)
             ABORT("thread_suspend failed");
           if (GC_on_thread_event)

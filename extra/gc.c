@@ -33,6 +33,8 @@
 #if IL2CPP_ENABLE_STRICT_WRITE_BARRIERS
 /* We need all il2cpp symbols to be public when using write barrier     */
 /* validation, so that we can patch them.                               */
+# define GC_INNER __attribute__((visibility("default")))
+# define GC_EXTERN __attribute__((visibility("default")))
 # define GC_API __attribute__((visibility("default")))
 #else
 # define GC_INNER STATIC

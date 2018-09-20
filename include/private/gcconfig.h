@@ -543,12 +543,10 @@ EXTERN_C_BEGIN
 #   if ((defined(_MSDOS) || defined(_MSC_VER)) && (_M_IX86 >= 300)) \
        || (defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__) \
            && !defined(SYMBIAN))
-#     if defined(__LP64__) || defined(_M_X64)
+#     if defined(__LP64__) || defined(_WIN64)
 #       define X86_64
 #     elif defined(_M_ARM)
 #       define ARM32
-#     elif defined(_M_ARM64)
-#       define AARCH64
 #     else /* _M_IX86 */
 #       define I386
 #     endif
@@ -2299,6 +2297,19 @@ EXTERN_C_BEGIN
 #     define DATASTART GC_FreeBSDGetDataStart(0x1000, (ptr_t)etext)
 #     define DATASTART_USES_BSDGETDATASTART
 #   endif
+#   ifdef NINTENDO_SWITCH
+      static int zero_fd = -1;
+#     define OPT_MAP_ANON 0
+      extern int __bss_end[];
+#     define NO_HANDLE_FORK
+#     define GETPAGESIZE() 4096
+#     define DATASTART (ptr_t)ALIGNMENT /* cannot be null */
+#     define DATAEND (ptr_t)(&__bss_end)
+      void *switch_get_stack_bottom(void);
+#     define STACKBOTTOM ((ptr_t)switch_get_stack_bottom())
+#     undef USE_MMAP
+#     undef USE_MUNMAP
+#   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.   */
       extern int __data_start[];
@@ -2436,14 +2447,6 @@ EXTERN_C_BEGIN
 #     define DATAEND (ptr_t)(Image$$ZI$$ZI$$Limit)
       void *n3ds_get_stack_bottom(void);
 #     define STACKBOTTOM ((ptr_t)n3ds_get_stack_bottom())
-#   endif
-#   ifdef NINTENDO_SWITCH
-      extern int __bss_end[];
-#     define NO_HANDLE_FORK
-#     define DATASTART (ptr_t)ALIGNMENT /* cannot be null */
-#     define DATAEND (ptr_t)(&__bss_end)
-      void *switch_get_stack_bottom(void);
-#     define STACKBOTTOM ((ptr_t)switch_get_stack_bottom())
 #   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.  */
