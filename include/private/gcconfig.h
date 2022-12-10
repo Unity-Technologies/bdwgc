@@ -34,6 +34,10 @@
 #   include <stddef.h>  /* For size_t etc. */
 # endif
 
+# ifdef _MSC_VER
+#   include <immintrin.h> /* for prefetch intrinsics */
+# endif
+
 /* Note: Only wrap our own declarations, and not the included headers.  */
 /* In this case, wrap our entire file, but temporarily unwrap/rewrap    */
 /* around #includes.  Types and macros do not need such wrapping, only  */
@@ -3196,7 +3200,11 @@ EXTERN_C_BEGIN
 # if GC_GNUC_PREREQ(3, 0) && !defined(NO_PREFETCH)
 #   define PREFETCH(x) __builtin_prefetch((x), 0, 0)
 # else
-#   define PREFETCH(x) (void)0
+#   ifdef _MSC_VER
+#     define PREFETCH(x) _mm_prefetch((x), _MM_HINT_T0)
+#   else
+#     define PREFETCH(x) (void)0
+#   endif
 # endif
 #endif
 
@@ -3204,7 +3212,11 @@ EXTERN_C_BEGIN
 # if GC_GNUC_PREREQ(3, 0) && !defined(GC_NO_PREFETCH_FOR_WRITE)
 #   define GC_PREFETCH_FOR_WRITE(x) __builtin_prefetch((x), 1)
 # else
-#   define GC_PREFETCH_FOR_WRITE(x) (void)0
+#   ifdef _MSC_VER
+#     define GC_PREFETCH_FOR_WRITE(x) _mm_prefetch((x), _MM_HINT_T0)
+#   else
+#     define GC_PREFETCH_FOR_WRITE(x) (void)0
+#   endif
 # endif
 #endif
 
