@@ -3199,24 +3199,20 @@ EXTERN_C_BEGIN
 #ifndef PREFETCH
 # if GC_GNUC_PREREQ(3, 0) && !defined(NO_PREFETCH)
 #   define PREFETCH(x) __builtin_prefetch((x), 0, 0)
+# elif defined(_MSC_VER) && !defined(NO_PREFETCH)
+#   define PREFETCH(x) _mm_prefetch((x), _MM_HINT_T0)
 # else
-#   ifdef _MSC_VER
-#     define PREFETCH(x) _mm_prefetch((x), _MM_HINT_T0)
-#   else
-#     define PREFETCH(x) (void)0
-#   endif
+#   define PREFETCH(x) (void)0
 # endif
 #endif
 
 #ifndef GC_PREFETCH_FOR_WRITE
 # if GC_GNUC_PREREQ(3, 0) && !defined(GC_NO_PREFETCH_FOR_WRITE)
 #   define GC_PREFETCH_FOR_WRITE(x) __builtin_prefetch((x), 1)
+# elif defined(_MSC_VER) && !defined(GC_NO_PREFETCH_FOR_WRITE)
+#   define GC_PREFETCH_FOR_WRITE(x) _mm_prefetch((x), _MM_HINT_T0)
 # else
-#   ifdef _MSC_VER
-#     define GC_PREFETCH_FOR_WRITE(x) _mm_prefetch((x), _MM_HINT_T0)
-#   else
-#     define GC_PREFETCH_FOR_WRITE(x) (void)0
-#   endif
+#   define GC_PREFETCH_FOR_WRITE(x) (void)0
 # endif
 #endif
 
