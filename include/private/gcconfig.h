@@ -35,7 +35,7 @@
 # endif
 
 # ifdef _MSC_VER
-#   include <immintrin.h> /* for prefetch intrinsics */
+#   include <intrin.h> /* for prefetch intrinsics */
 # endif
 
 /* Note: Only wrap our own declarations, and not the included headers.  */
