@@ -32,7 +32,7 @@
 #include "gc_tiny_fl.h"
 
 # ifdef _MSC_VER
-#   include <immintrin.h> /* for prefetch intrinsics */
+#   include <intrin.h> /* for prefetch intrinsics */
 # endif
 
 #if GC_GNUC_PREREQ(3, 0)
