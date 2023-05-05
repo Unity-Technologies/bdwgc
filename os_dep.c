@@ -871,6 +871,16 @@ GC_INNER size_t GC_page_size = 0;
 #   define GET_MAIN_STACKBASE_SPECIAL
 # endif /* AMIGA */
 
+#ifdef __QNX__
+  GC_API int GC_CALL GC_get_stack_base(struct GC_stack_base *sb)
+  {
+    int base;
+    sb->mem_base = &base;
+    return GC_SUCCESS;
+  }
+# define HAVE_GET_STACK_BASE
+#endif /* __QNX__*/
+
 # if defined(NEED_FIND_LIMIT) || defined(UNIX_LIKE)
 
     typedef void (*GC_fault_handler_t)(int);
