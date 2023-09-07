@@ -2112,7 +2112,7 @@ void GC_register_data_segments(void)
 
 # if !defined(OS2) && !defined(PCR) && !defined(AMIGA) \
      && !defined(USE_WINALLOC) && !defined(MACOS) && !defined(DOS4GW) \
-     && !defined(NINTENDO_SWITCH) && !defined(NONSTOP) \
+     && !defined(NINTENDO_SWITCH) && !defined(NINTENDO_SWITCH2) && !defined(NONSTOP) \
      && !defined(SN_TARGET_ORBIS) && !defined(SN_TARGET_PS3) \
      && !defined(SN_TARGET_PSP2) && !defined(RTEMS) && !defined(__CC_ARM)
 
@@ -2790,7 +2790,7 @@ STATIC void GC_CALLBACK GC_default_push_other_roots(void)
 
 # endif /* PCR */
 
-# if defined(NN_PLATFORM_CTR) || defined(NINTENDO_SWITCH) \
+# if defined(NN_PLATFORM_CTR) || defined(NINTENDO_SWITCH) || defined(NINTENDO_SWITCH2) \
      || defined(GC_PTHREADS) || defined(GC_WIN32_THREADS)
     STATIC void GC_CALLBACK GC_default_push_other_roots(void)
     {
