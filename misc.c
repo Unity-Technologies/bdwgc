@@ -2569,6 +2569,16 @@ GC_API void GC_CALL GC_start_world_external()
     UNLOCK();
 }
 
+GC_API int GC_CALL GC_get_mark_stack_bytes_remaining()
+{
+  return (word)GC_mark_stack_limit - (word)GC_mark_stack_top;
+}
+
+GC_API int GC_CALL GC_get_mark_stack_initial_size()
+{
+  return INITIAL_MARK_STACK_SIZE;
+}
+
 /* Disable incremental GC. Only tested with MANUAL_VDB mode. Might */
 /* require extra teardown work when using other VDB configs.*/
 GC_API void GC_CALL GC_disable_incremental(void)

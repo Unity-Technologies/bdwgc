@@ -2044,6 +2044,9 @@ GC_API void GC_CALL GC_disable_incremental(void);
 GC_API void GC_CALL GC_start_incremental_collection (void);
 GC_API void GC_CALL GC_set_disable_automatic_collection(int);
 
+GC_API int GC_CALL GC_get_mark_stack_bytes_remaining();
+GC_API int GC_CALL GC_get_mark_stack_initial_size();
+
 /* APIs for getting access to raw GC heap */
 /* These are NOT thread safe, so should be called with GC lock held */
 typedef enum
