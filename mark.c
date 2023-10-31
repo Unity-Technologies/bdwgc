@@ -1384,6 +1384,55 @@ GC_API void GC_CALL GC_push_all(void *bottom, void *top)
     GC_mark_stack_top -> mse_descr.w = length;
 }
 
+GC_API void GC_CALL GC_push_proc(GC_word proc , void * start)
+{
+    GC_mark_stack_top++;
+    if ((word)GC_mark_stack_top >= (word)GC_mark_stack_limit) {
+        GC_mark_stack_top = GC_signal_mark_stack_overflow (GC_mark_stack_top);
+    }
+    GC_mark_stack_top -> mse_descr.w = proc;
+    GC_mark_stack_top -> mse_start = (ptr_t)start;
+}
+
+GC_API struct GC_ms_entry * GC_CALL GC_custom_push_range(void * bottom , void * top,
+                                struct GC_ms_entry * mark_stack_ptr,
+                                struct GC_ms_entry * mark_stack_limit)
+{
+    word length;
+
+    bottom = (void *)(((word)bottom + ALIGNMENT-1) & ~(ALIGNMENT-1));
+    top = (void *)((word)top & ~(ALIGNMENT-1));
+    if ((word)bottom >= (word)top) return mark_stack_ptr;
+
+    mark_stack_ptr++;
+    if ((word)mark_stack_ptr >= (word)mark_stack_limit) {
+        mark_stack_ptr = GC_signal_mark_stack_overflow (mark_stack_ptr);
+    }
+    length = (word)top - (word)bottom;
+#   if GC_DS_TAGS > ALIGNMENT - 1
+        length += GC_DS_TAGS;
+        length &= ~GC_DS_TAGS;
+#   endif
+    mark_stack_ptr -> mse_start = (ptr_t)bottom;
+    mark_stack_ptr -> mse_descr.w = length;
+
+    return mark_stack_ptr;
+}
+
+GC_API struct GC_ms_entry * GC_CALL GC_custom_push_proc(GC_word proc , void * start,
+                                struct GC_ms_entry * mark_stack_ptr,
+                                struct GC_ms_entry * mark_stack_limit)
+{
+    mark_stack_ptr++;
+    if ((word)mark_stack_ptr >= (word)mark_stack_limit) {
+        mark_stack_ptr = GC_signal_mark_stack_overflow (mark_stack_ptr);
+    }
+    mark_stack_ptr -> mse_descr.w = proc;
+    mark_stack_ptr -> mse_start = (ptr_t)start;
+
+    return mark_stack_ptr;
+}
+
 #ifndef GC_DISABLE_INCREMENTAL
 
   /* Analogous to the above, but push only those pages h with           */
