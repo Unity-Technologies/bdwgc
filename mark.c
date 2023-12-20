@@ -400,23 +400,21 @@ static void alloc_mark_stack(size_t);
                 MARK_FROM_MARK_STACK();
                 break;
             } else {
-                if (GC_mark_stack_too_small) {
-                    GC_mark_state = MS_NONE;
-                    alloc_mark_stack(2*GC_mark_stack_size);
-                    return(TRUE);
-                } else {
-                  GC_mark_stack_empty_proc mark_stack_empty_proc = GC_get_mark_stack_empty();
-                  if (mark_stack_empty_proc) {
-                      GC_mark_stack_top = mark_stack_empty_proc(GC_mark_stack_top, GC_mark_stack_limit);
-                  }
-                  /* if we pushed new items or overflowed stack we need to continue processing */
-                  if (((word)GC_mark_stack_top >= (word)GC_mark_stack) || GC_mark_stack_too_small) {
-                      break;
-                  }
-
-                  GC_mark_state = MS_NONE;
-                  return(TRUE);
+                GC_mark_stack_empty_proc mark_stack_empty_proc = GC_get_mark_stack_empty();
+                if (mark_stack_empty_proc) {
+                    GC_mark_stack_top = mark_stack_empty_proc(GC_mark_stack_top, GC_mark_stack_limit);
+                    /* if we pushed new items we need to continue processing */
+                    if ((word)GC_mark_stack_top >= (word)GC_mark_stack) {
+                        break;
+                    }
                 }
+
+                if (GC_mark_stack_too_small) {
+                    alloc_mark_stack(2 * GC_mark_stack_size);
+                }
+
+                GC_mark_state = MS_NONE;
+                return(TRUE);
                 break;
             }
 
