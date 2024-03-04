@@ -127,6 +127,12 @@ EXTERN_C_BEGIN
     EXTERN_C_END
 #   include <TargetConditionals.h>
     EXTERN_C_BEGIN
+#   if !defined(TARGET_OS_XR)
+#     define TARGET_OS_XR 0
+#   endif
+#   if !defined(TARGET_OS_VISION)
+#     define TARGET_OS_VISION 0
+#   endif
 # endif
 
 /* Determine the machine type: */
