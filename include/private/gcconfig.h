@@ -2332,6 +2332,10 @@ EXTERN_C_BEGIN
 #     undef USE_MMAP
 #     undef USE_MUNMAP
 #   endif
+#   ifdef TARGET_PLAYDATE
+#     undef USE_MMAP
+#     undef USE_MUNMAP
+#   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.   */
       extern int __data_start[];
@@ -3115,8 +3119,9 @@ EXTERN_C_BEGIN
 # undef USE_MMAP
 #endif
 
-#if defined(LINUX) || defined(FREEBSD) || defined(SOLARIS) || defined(IRIX5) \
-    || ((defined(USE_MMAP) || defined(USE_MUNMAP)) && !defined(USE_WINALLOC))
+#if (defined(LINUX) || defined(FREEBSD) || defined(SOLARIS) || defined(IRIX5) \
+    || ((defined(USE_MMAP) || defined(USE_MUNMAP)) && !defined(USE_WINALLOC))) \
+    && !defined(TARGET_PLAYDATE)
 # define MMAP_SUPPORTED
 #endif
 

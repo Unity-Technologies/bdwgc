@@ -2487,7 +2487,7 @@ void * os2_alloc(size_t bytes)
   }
 #endif /* HAIKU */
 
-#ifdef USE_MUNMAP
+#if defined(USE_MUNMAP) && defined(MMAP_SUPPORTED)
 
 /* For now, this only works on Win32/WinCE and some Unix-like   */
 /* systems.  If you have something else, don't define           */
