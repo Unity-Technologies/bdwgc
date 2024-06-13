@@ -151,6 +151,8 @@ EXTERN_C_BEGIN
 #    define ARM32
 #    if defined(NACL)
 #      define mach_type_known
+#    elif defined(TARGET_PLAYDATE)
+#      define mach_type_known
 #    elif !defined(LINUX) && !defined(NETBSD) && !defined(FREEBSD) \
           && !defined(OPENBSD) && !defined(DARWIN) && !defined(_WIN32) \
           && !defined(__CEGCC__) && !defined(NN_PLATFORM_CTR) \
@@ -883,6 +885,15 @@ EXTERN_C_BEGIN
 #   define DATASTART (ptr_t)ALIGNMENT /* cannot be null */
 #   define DATAEND (ptr_t)ALIGNMENT
 # endif
+
+#ifdef TARGET_PLAYDATE
+#   define OS_TYPE "PLAYDATE"
+#   define CPP_WORDSZ 32
+#   define ALIGNMENT 1
+#   define DATASTART (ptr_t)ALIGNMENT
+#   define DATAEND (ptr_t)ALIGNMENT
+#   define STACK_NOT_SCANNED
+#endif
 
 # ifdef __EMSCRIPTEN__
 #   define OS_TYPE "EMSCRIPTEN"
@@ -2329,10 +2340,6 @@ EXTERN_C_BEGIN
 #     define DATAEND (ptr_t)(&__bss_end)
       void *switch_get_stack_bottom(void);
 #     define STACKBOTTOM ((ptr_t)switch_get_stack_bottom())
-#     undef USE_MMAP
-#     undef USE_MUNMAP
-#   endif
-#   ifdef TARGET_PLAYDATE
 #     undef USE_MMAP
 #     undef USE_MUNMAP
 #   endif
