@@ -2465,6 +2465,15 @@ void * os2_alloc(size_t bytes)
         VirtualFree(GC_heap_bases[--GC_n_heap_bases], 0, MEM_RELEASE);
         GC_heap_bases[GC_n_heap_bases] = 0;
       }
+
+      /* Avoiding malloc leak. */
+      struct GC_malloc_heap_list *q = GC_malloc_heap_l;
+      while (q)
+      {
+        struct GC_malloc_heap_list* qNext = q->next;
+        free(q);
+        q = qNext;
+      }
 #   endif
   }
 #endif /* USE_WINALLOC || CYGWIN32 */

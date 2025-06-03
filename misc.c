@@ -1406,6 +1406,7 @@ GC_API void GC_CALL GC_enable_incremental(void)
         DeleteCriticalSection(&GC_allocate_ml);
 #     endif
         GC_clear_exclusion_table();
+        GC_win32_free_heap();
         memset(&GC_arrays, 0, sizeof(GC_arrays));
         GC_clear_freelist();
         GC_clear_bottom_indices();
