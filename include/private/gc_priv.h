@@ -463,7 +463,7 @@ EXTERN_C_END
 # define GET_TIME(x) (void)(x = n3ds_get_system_tick())
 # define MS_TIME_DIFF(a,b) ((long)n3ds_convert_tick_to_ms((a)-(b)))
 # define NS_TIME_DIFF(a,b) ((long long)n3ds_convert_tick_to_ms((a)-(b)) * 1000000)
-#elif defined(NINTENDO_SWITCH)
+#elif defined(NINTENDO_SWITCH) || defined(NINTENDO_SWITCH2)
 #include <time.h>
 # define CLOCK_TYPE long long
 # define GET_TIME(x) \
@@ -477,7 +477,7 @@ EXTERN_C_END
                 } while (0)
 # define MS_TIME_DIFF(a,b) ((unsigned long)(((a) - (b)) / 1000000))
 # define NS_TIME_DIFF(a,b) ((a)-(b))
-#else /* !BSD_TIME && !NN_PLATFORM_CTR && !MSWIN32 && !MSWINCE && !NINTENDO_SWITCH */
+#else /* !BSD_TIME && !NN_PLATFORM_CTR && !MSWIN32 && !MSWINCE && !NINTENDO_SWITCH && !NINTENDO_SWITCH2 */
 # include <time.h>
 # if defined(FREEBSD) && !defined(CLOCKS_PER_SEC)
 #   include <machine/limits.h>
@@ -548,7 +548,7 @@ EXTERN_C_BEGIN
                                    PCR_allSigsBlocked, \
                                    PCR_waitForever)
 # else
-#   if defined(NN_PLATFORM_CTR) || defined(NINTENDO_SWITCH) \
+#   if defined(NN_PLATFORM_CTR) || defined(NINTENDO_SWITCH) || defined(NINTENDO_SWITCH2) \
        || defined(GC_WIN32_THREADS) || defined(GC_PTHREADS)
       GC_INNER void GC_stop_world(void);
       GC_INNER void GC_start_world(void);

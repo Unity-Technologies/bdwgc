@@ -132,7 +132,7 @@
 #undef GC_PTHREADS
 #if (!defined(GC_WIN32_THREADS) || defined(GC_WIN32_PTHREADS) \
      || defined(__CYGWIN32__) || defined(__CYGWIN__)) && defined(GC_THREADS) \
-    && !defined(NN_PLATFORM_CTR) && !defined(NN_BUILD_TARGET_PLATFORM_NX)
+    && !defined(NN_PLATFORM_CTR) && !defined(NN_BUILD_TARGET_PLATFORM_NX) && !defined(NINTENDO_SWITCH2)
   /* Posix threads. */
 # define GC_PTHREADS
 #endif
