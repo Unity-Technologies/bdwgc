@@ -676,7 +676,11 @@ EXTERN_C_BEGIN
 # endif
 
 # if defined(__EMSCRIPTEN__)
-#   define I386
+#   ifdef __wasm64__
+#     define X86_64
+#   else
+#     define I386
+#   endif
 #   define mach_type_known
 # endif
 
@@ -896,8 +900,13 @@ EXTERN_C_BEGIN
 
 # ifdef __EMSCRIPTEN__
 #   define OS_TYPE "EMSCRIPTEN"
-#   define CPP_WORDSZ 32
-#   define ALIGNMENT 4
+#   ifdef __wasm64__
+#     define CPP_WORDSZ 64
+#     define ALIGNMENT 8
+#   else
+#     define CPP_WORDSZ 32
+#     define ALIGNMENT 4
+#   endif
 #   define DATASTART (ptr_t)ALIGNMENT
 #   define DATAEND (ptr_t)ALIGNMENT
     /* Since JavaScript/asm.js/WebAssembly is not able to access the    */
