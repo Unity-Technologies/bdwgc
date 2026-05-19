@@ -31,6 +31,10 @@
 #include "gc.h"
 #include "gc_tiny_fl.h"
 
+# ifdef _MSC_VER
+#   include <intrin.h> /* for prefetch intrinsics */
+# endif
+
 #if GC_GNUC_PREREQ(3, 0)
 # define GC_EXPECT(expr, outcome) __builtin_expect(expr,outcome)
   /* Equivalent to (expr), but predict that usually (expr)==outcome. */
@@ -54,6 +58,8 @@
 #ifndef GC_PREFETCH_FOR_WRITE
 # if GC_GNUC_PREREQ(3, 0) && !defined(GC_NO_PREFETCH_FOR_WRITE)
 #   define GC_PREFETCH_FOR_WRITE(x) __builtin_prefetch((x), 1)
+# elif defined(_MSC_VER) && !defined(GC_NO_PREFETCH_FOR_WRITE) && !defined(_M_ARM) && !defined(_M_ARM64)
+#   define GC_PREFETCH_FOR_WRITE(x) _mm_prefetch((x), _MM_HINT_T0)
 # else
 #   define GC_PREFETCH_FOR_WRITE(x) (void)0
 # endif
