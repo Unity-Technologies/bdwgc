@@ -1822,9 +1822,13 @@ void GC_register_data_segments(void)
 
   GC_INNER void GC_add_current_malloc_heap(void)
   {
-    struct GC_malloc_heap_list *new_l =
-                 malloc(sizeof(struct GC_malloc_heap_list));
-    void * candidate = GC_get_allocation_base(new_l);
+    struct GC_malloc_heap_list *new_l;
+    void * candidate;
+
+    if (!GC_no_win32_dlls) return;
+
+    new_l = malloc(sizeof(struct GC_malloc_heap_list));
+    candidate = GC_get_allocation_base(new_l);
 
     if (new_l == 0) return;
     if (GC_is_malloc_heap_base(candidate)) {
