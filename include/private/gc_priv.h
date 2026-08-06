@@ -175,6 +175,8 @@ typedef char * ptr_t;   /* A generic pointer to which we can add        */
 #   define GC_ATTR_NO_SANITIZE_ADDR /* empty */
 # elif GC_CLANG_PREREQ(3, 8)
 #   define GC_ATTR_NO_SANITIZE_ADDR __attribute__((no_sanitize("address")))
+# elif defined(_MSC_VER)
+#   define GC_ATTR_NO_SANITIZE_ADDR __declspec(no_sanitize_address)
 # else
 #   define GC_ATTR_NO_SANITIZE_ADDR __attribute__((no_sanitize_address))
 # endif
