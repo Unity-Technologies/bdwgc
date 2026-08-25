@@ -1474,6 +1474,16 @@ GC_INNER GC_bool GC_collect_or_expand(word needed_blocks,
     IF_CANCEL(int cancel_state;)
 
     DISABLE_CANCEL(cancel_state);
+                                                              
+    if (GC_incremental && !GC_dont_gc
+        && GC_fo_entries > (last_fo_entries + 500)
+        && (last_bytes_finalized | GC_bytes_finalized) != 0) {
+      (void)GC_try_to_collect_inner(GC_never_stop_func);
+      last_fo_entries = GC_fo_entries;
+      last_bytes_finalized = GC_bytes_finalized;
+      RESTORE_CANCEL(cancel_state);
+      return(TRUE);
+    }
     if (!GC_incremental && !GC_dont_gc &&
         ((GC_dont_expand && GC_bytes_allocd > 0)
          || (GC_fo_entries > (last_fo_entries + 500)
