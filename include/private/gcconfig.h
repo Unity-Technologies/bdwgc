@@ -676,7 +676,11 @@ EXTERN_C_BEGIN
 # endif
 
 # if defined(__EMSCRIPTEN__)
-#   define I386
+#   ifdef __wasm64__
+#     define X86_64
+#   else
+#     define I386
+#   endif
 #   define mach_type_known
 # endif
 
@@ -895,19 +899,21 @@ EXTERN_C_BEGIN
 # endif
 
 # ifdef __EMSCRIPTEN__
+#   include <emscripten/stack.h>
 #   define OS_TYPE "EMSCRIPTEN"
-#   define CPP_WORDSZ 32
-#   define ALIGNMENT 4
+#   ifdef __wasm64__
+#     define CPP_WORDSZ 64
+#     define ALIGNMENT 8
+#   else
+#     define CPP_WORDSZ 32
+#     define ALIGNMENT 4
+#   endif
 #   define DATASTART (ptr_t)ALIGNMENT
 #   define DATAEND (ptr_t)ALIGNMENT
-    /* Since JavaScript/asm.js/WebAssembly is not able to access the    */
-    /* function call stack or the local data stack, it is not possible  */
-    /* for GC to perform its stack walking operation to find roots on   */
-    /* the stack.  To work around that, the clients generally only do   */
-    /* BDWGC steps when the stack is empty so it is known that there    */
-    /* are no objects that would be found on the stack, and BDWGC is    */
-    /* compiled with stack walking disabled.                            */
-#   define STACK_NOT_SCANNED
+    /* With --spill-pointers, pointer locals are spilled to the          */
+    /* Emscripten software stack at function call boundaries, making     */
+    /* them scannable by the GC.                                         */
+#   define STACKBOTTOM ((ptr_t)emscripten_stack_get_base())
 # endif
 
 # ifdef QNX
