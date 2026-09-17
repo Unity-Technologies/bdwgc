@@ -1218,6 +1218,7 @@ STATIC void GC_suspend(GC_thread t)
 # ifdef RETRY_GET_THREAD_CONTEXT
     int retry_cnt = 0;
 #   define MAX_SUSPEND_THREAD_RETRIES (1000 * 1000)
+#   define SUSPEND_THREAD_SLEEP_INTERVAL (10000)
 # endif
   UNPROTECT_THREAD(t);
   GC_acquire_dirty_lock ();
@@ -1243,9 +1244,12 @@ STATIC void GC_suspend(GC_thread t)
           ABORT("ResumeThread failed");
       }
       if (retry_cnt > 1)
-        Sleep(0); /* yield */
+        Sleep(retry_cnt % SUSPEND_THREAD_SLEEP_INTERVAL == 0 ? 1 : 0); /* yield */
       if (++retry_cnt >= MAX_SUSPEND_THREAD_RETRIES)
-        ABORT("SuspendThread loop failed"); /* something must be wrong */
+        ABORT_ARG3("SuspendThread loop failed", /* something must be wrong */
+                   ": thread id= 0x%x, handle= %p, errcode= 0x%X",
+                   (unsigned)t->id, (void *)t->handle,
+                   (unsigned)GetLastError());
     }
 # else
     if (SuspendThread(t -> handle) == (DWORD)-1)
