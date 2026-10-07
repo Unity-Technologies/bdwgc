@@ -3126,6 +3126,14 @@ GC_API GC_mark_stack_empty_proc GC_CALL GC_get_mark_stack_empty (void)
     word index = PHT_HASH(p);
     async_set_pht_entry_from_index(GC_dirty_pages, index);
   }
+
+  GC_API volatile GC_word * GC_CALL GC_get_dirty_pages(unsigned *log_block_size,
+                                                       unsigned *log_entries)
+  {
+    *log_block_size = (unsigned)LOG_HBLKSIZE;
+    *log_entries = LOG_PHT_ENTRIES;
+    return GC_incremental ? GC_dirty_pages : NULL;
+  }
 #endif
 
 # ifdef CHECKSUMS
