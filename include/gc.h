@@ -530,6 +530,15 @@ GC_API GC_ATTR_DEPRECATED void GC_CALL GC_change_stubborn(const void *);
 /* MANUAL_VDB defined (otherwise the function does nothing).            */
 GC_API void GC_CALL GC_end_stubborn_change(const void *) GC_ATTR_NONNULL(1);
 
+/* The MANUAL_VDB dirty page bitmap that GC_end_stubborn_change sets,   */
+/* or NULL if incremental mode is off.  Bit i of the bitmap covers the  */
+/* blocks whose address hashes to i:                                    */
+/* (addr >> log_block_size) & ((1 << log_entries) - 1).  The collector  */
+/* only reads and clears bits with the world stopped, so a store whose  */
+/* page bit is already set need not set it again.                       */
+GC_API volatile GC_word * GC_CALL GC_get_dirty_pages(unsigned * /* log_block_size */,
+                                                     unsigned * /* log_entries */);
+
 /* Return a pointer to the base (lowest address) of an object given     */
 /* a pointer to a location within the object.                           */
 /* I.e., map an interior pointer to the corresponding base pointer.     */
