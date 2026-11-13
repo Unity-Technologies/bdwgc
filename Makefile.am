@@ -238,5 +238,6 @@ include doc/doc.am
 # Putting these at the top causes cord to be built first, and not find libgc.a
 # on HP/UX.  There may be a better fix.
 
-# dummy target for mono build
+# dummy targets for mono build
+test: 
 test-bundle: 
